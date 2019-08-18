@@ -1,0 +1,61 @@
+#versao do yaml
+version: '3'
+
+#cada servico vai ser um conteiner
+services:
+
+#  nome do meu serviço
+    app:
+
+#      construir uma imagem
+      build:
+
+#       localizacao do dockerfile
+        dockerfile: ./docker/Dockerfile
+
+#        começar a buscar apartir de onde
+        context: .
+
+#        nome da imagem apos ser criada
+      image: allaappyaml
+
+#      nome do conteiner
+      container_name: app-yaml
+
+#      link entre as potas do host e do container
+      ports:
+        - "8080:8080"
+
+#    nome da rede
+      networks:
+        - rede-de-producao
+
+      depends_on:
+        - postgres
+
+    postgres:
+      image: postgres:9.6.15-alpine
+      ports:
+        - "5432:5432"
+      environment:
+        - POSTGRES_PASSWORD = 123456
+        - POSTGRES_USER = postgres
+        - POSTGRES_DB = training
+      networks:
+         rede-de-producao:
+            ipv4_address: 10.5.1.2
+
+
+
+
+
+
+#criacao de uma rede
+networks:
+  rede-de-producao:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+
+
